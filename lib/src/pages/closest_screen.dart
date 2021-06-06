@@ -1,3 +1,4 @@
+import 'package:amb_sc/src/models/evento_model.dart';
 import 'package:amb_sc/src/providers/eventos_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ class ClosestScreen extends StatefulWidget {
 class _ClosestScreenState extends State<ClosestScreen> {
   EventosProvider eventosProvider = new EventosProvider();
 
-  List data = [""];
+  List<EventoModel> data = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,32 +21,19 @@ class _ClosestScreenState extends State<ClosestScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             snapshot.data.listen((List<DocumentSnapshot> documentList) {
-              this.data = documentList.map((e) => e.data()).toList();
+              this.data = documentList
+                  .map((e) => EventoModel.fromJson(e.data()))
+                  .toList();
             });
 
             return Scaffold(
               appBar: AppBar(
                 title: Text('Lugares Cercanos'),
               ),
-              body: Column(
-                children:
-                    //  _listaItems()
-                    [
-                  Text(data.toString()),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(data[0].toString()),
-                  SizedBox(
-                    height: 100,
-                  ),
-                  SizedBox(
-                    height: 100,
-                  ),
-                  FloatingActionButton(onPressed: () {
-                    setState(() {});
-                  })
-                ],
+              body: SingleChildScrollView(
+                child: Column(
+                  children: _listaItems(),
+                ),
               ),
             );
           } else {
@@ -59,15 +47,22 @@ class _ClosestScreenState extends State<ClosestScreen> {
   List<Widget> _listaItems() {
     return [
       ListTile(
-        title: Text(this.data[0].toString()),
+        title: Text(this.data[0].titulo),
       ),
       Divider(),
       ListTile(
-        title: Text(this.data[1].toString()),
+        title: Text(this.data[0].descripcion),
       ),
       Divider(),
       ListTile(
-        title: Text(this.data[2].toString()),
+        title: FloatingActionButton(
+          child: Text("Detalles"),
+          onPressed: () {},
+        ),
+      ),
+      Divider(),
+      ListTile(
+        title: Text("==========================================="),
       ),
       Divider()
     ];
